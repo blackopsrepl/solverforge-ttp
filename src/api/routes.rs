@@ -12,7 +12,7 @@ use super::dto::{
     PlanDto, QualifiedJobRequestDto,
 };
 use super::sse;
-use crate::data::{generate, DemoData};
+use crate::data::{generate, instances, DemoData};
 use crate::solver::SolverService;
 
 /// Shared application state.
@@ -88,18 +88,22 @@ struct DemoDataCatalogResponse {
 }
 
 async fn list_demo_data() -> Json<DemoDataCatalogResponse> {
+    let mut available: Vec<&'static str> = DemoData::available_demo_data()
+        .iter()
+        .map(|demo| demo.id())
+        .collect();
+    available.extend(instances::INSTANCE_IDS);
     Json(DemoDataCatalogResponse {
-        default_id: DemoData::default_demo_data().id(),
-        available_ids: DemoData::available_demo_data()
-            .iter()
-            .map(|demo| demo.id())
-            .collect(),
+        default_id: instances::DEFAULT_INSTANCE_ID,
+        available_ids: available,
     })
 }
 
 async fn get_demo_data(Path(id): Path<String>) -> Result<Json<PlanDto>, StatusCode> {
-    let demo = id.parse::<DemoData>().map_err(|_| StatusCode::NOT_FOUND)?;
-    let plan = generate(demo);
+    if let Ok(demo) = id.parse::<DemoData>() {
+        return Ok(Json(PlanDto::from_plan(&generate(demo))));
+    }
+    let plan = instances::load(&id).ok_or(StatusCode::NOT_FOUND)?;
     Ok(Json(PlanDto::from_plan(&plan)))
 }
 

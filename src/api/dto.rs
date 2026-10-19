@@ -8,7 +8,7 @@ use solverforge::{
 
 use super::telemetry::{CandidateTraceDto, TelemetryDto};
 
-use crate::domain::Plan;
+use crate::domain::Schedule;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -22,7 +22,7 @@ pub struct PlanDto {
 #[cfg(feature = "schema")]
 impl schemars::JsonSchema for PlanDto {
     fn schema_name() -> std::borrow::Cow<'static, str> {
-        "Plan".into()
+        "Schedule".into()
     }
 
     fn json_schema(_generator: &mut schemars::SchemaGenerator) -> schemars::Schema {
@@ -133,7 +133,7 @@ pub struct QualifiedCandidateTraceProvenanceDto {
 }
 
 impl PlanDto {
-    pub fn from_plan(plan: &Plan) -> Self {
+    pub fn from_plan(plan: &Schedule) -> Self {
         let mut fields = match serde_json::to_value(plan).expect("failed to serialize plan") {
             Value::Object(map) => map,
             _ => Map::new(),
@@ -151,7 +151,7 @@ impl PlanDto {
         Self { fields, score }
     }
 
-    pub fn to_domain(&self) -> Result<Plan, serde_json::Error> {
+    pub fn to_domain(&self) -> Result<Schedule, serde_json::Error> {
         let mut fields = self.fields.clone();
         let _ = &self.score;
         fields.insert("score".to_string(), Value::Null);
@@ -209,7 +209,7 @@ impl QualifiedCandidateTraceProvenanceDto {
 }
 
 impl JobSnapshotDto {
-    pub fn from_snapshot(snapshot: &SolverSnapshot<Plan>) -> Self {
+    pub fn from_snapshot(snapshot: &SolverSnapshot<Schedule>) -> Self {
         Self {
             id: snapshot.job_id.to_string(),
             job_id: snapshot.job_id.to_string(),
@@ -283,7 +283,7 @@ fn parse_sha256(name: &str, value: &str) -> Result<CandidateTraceExternalDigest,
         ));
     }
     let mut bytes = [0_u8; 32];
-    for (index, pair) in value.as_bytes().chunks_exact(2).enumerate() {
+    for (index, pair) in value.as_bytes().as_chunks::<2>().0.iter().enumerate() {
         let high = hex_nibble(pair[0]).ok_or_else(|| format!("{name} must be hexadecimal"))?;
         let low = hex_nibble(pair[1]).ok_or_else(|| format!("{name} must be hexadecimal"))?;
         bytes[index] = (high << 4) | low;
