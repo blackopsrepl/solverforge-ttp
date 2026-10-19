@@ -1,7 +1,7 @@
 /* ttp — neutral constraint optimizer built with SolverForge
 
 Structure:
-  domain/      — Plan (solution) plus CLI-generated entities and facts
+  domain/      — Schedule (solution) plus CLI-generated entities and facts
   constraints/ — Scoring rules
   solver/      — Engine, service, termination config
   api/         — HTTP API (axum)

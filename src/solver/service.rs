@@ -11,10 +11,10 @@ use solverforge::{
 };
 
 use crate::api::{PlanDto, TelemetryDto};
-use crate::domain::Plan;
+use crate::domain::Schedule;
 
 // Static manager — must be 'static for retained job execution.
-static MANAGER: SolverManager<Plan> = SolverManager::new();
+static MANAGER: SolverManager<Schedule> = SolverManager::new();
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -49,14 +49,14 @@ impl SolverService {
         }
     }
 
-    pub fn start_job(&self, plan: Plan) -> Result<String, SolverManagerError> {
+    pub fn start_job(&self, plan: Schedule) -> Result<String, SolverManagerError> {
         let (job_id, receiver) = MANAGER.solve(plan)?;
         Ok(self.retain_job(job_id, receiver))
     }
 
     pub fn start_qualified_job(
         &self,
-        plan: Plan,
+        plan: Schedule,
         provenance: QualifiedCandidateTraceRunProvenance,
     ) -> Result<String, SolverManagerError> {
         let (job_id, receiver) =
@@ -67,7 +67,7 @@ impl SolverService {
     fn retain_job(
         &self,
         job_id: usize,
-        receiver: mpsc::UnboundedReceiver<SolverEvent<Plan>>,
+        receiver: mpsc::UnboundedReceiver<SolverEvent<Schedule>>,
     ) -> String {
         let (sse_tx, _) = broadcast::channel(64);
 
@@ -149,7 +149,7 @@ impl SolverService {
         &self,
         id: &str,
         snapshot_revision: Option<u64>,
-    ) -> Result<SolverSnapshot<Plan>, SolverManagerError> {
+    ) -> Result<SolverSnapshot<Schedule>, SolverManagerError> {
         MANAGER.get_snapshot(parse_job_id(id)?, snapshot_revision)
     }
 
@@ -166,7 +166,7 @@ async fn drain_receiver(
     jobs: Arc<RwLock<HashMap<usize, JobState>>>,
     job_id: usize,
     sse_tx: broadcast::Sender<String>,
-    mut receiver: mpsc::UnboundedReceiver<SolverEvent<Plan>>,
+    mut receiver: mpsc::UnboundedReceiver<SolverEvent<Schedule>>,
 ) {
     while let Some(event) = receiver.recv().await {
         let payload = match &event {
@@ -234,7 +234,7 @@ fn snapshot_status_event_payload(
     job_id: usize,
     event_type: &'static str,
     status: &SolverStatus<HardSoftScore>,
-    snapshot: &SolverSnapshot<Plan>,
+    snapshot: &SolverSnapshot<Schedule>,
 ) -> String {
     serialize_payload(JobEventPayload {
         id: job_id.to_string(),
@@ -280,7 +280,7 @@ fn event_payload(
     job_id: usize,
     event_type: &'static str,
     metadata: &SolverEventMetadata<HardSoftScore>,
-    solution: Option<&Plan>,
+    solution: Option<&Schedule>,
     error: Option<&str>,
 ) -> String {
     serialize_payload(JobEventPayload {

@@ -1,6 +1,51 @@
 {
-  "entities": [],
-  "facts": [],
-  "constraints": [],
-  "views": []
+  "conflictRepairs": [],
+  "constraints": [
+    "away_double_booking",
+    "cross_side_double_booking",
+    "first_round_departure",
+    "home_double_booking",
+    "home_stand_limit",
+    "last_round_return",
+    "pair_no_repeater",
+    "road_trip_limit",
+    "travel_away_to_away",
+    "travel_away_to_home",
+    "travel_home_to_away"
+  ],
+  "entities": [
+    {
+      "label": "Game",
+      "name": "game",
+      "plural": "games"
+    }
+  ],
+  "facts": [
+    {
+      "label": "Team",
+      "name": "team",
+      "plural": "teams"
+    },
+    {
+      "label": "Round",
+      "name": "round",
+      "plural": "rounds"
+    }
+  ],
+  "scalarGroups": [],
+  "views": [
+    {
+      "allowsUnassigned": false,
+      "countableRange": null,
+      "entity": "game",
+      "entityPlural": "games",
+      "id": "game-round",
+      "kind": "scalar",
+      "label": "Game · round",
+      "listMetadata": {},
+      "scalarHooks": {},
+      "sourcePlural": "rounds",
+      "variableField": "round"
+    }
+  ]
 }

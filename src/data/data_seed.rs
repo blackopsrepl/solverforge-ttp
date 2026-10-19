@@ -2,7 +2,7 @@
 
 use std::str::FromStr;
 
-use crate::domain::Plan;
+use crate::domain::{Game, Round, Schedule, Team};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DemoData {
@@ -53,14 +53,47 @@ impl FromStr for DemoData {
     }
 }
 
-pub fn generate(demo: DemoData) -> Plan {
+pub fn generate(demo: DemoData) -> Schedule {
     match demo {
-        DemoData::Small => generate_plan(),
-        DemoData::Standard => generate_plan(),
-        DemoData::Large => generate_plan(),
+        DemoData::Small => generate_plan(2, 3, 5),
+        DemoData::Standard => generate_plan(4, 6, 12),
+        DemoData::Large => generate_plan(8, 11, 20),
     }
 }
 
-fn generate_plan() -> Plan {
-    Plan::new()
+fn generate_plan(count_teams: usize, count_rounds: usize, count_games: usize) -> Schedule {
+    let teams = (0..count_teams)
+        .map(|idx| Team {
+            id: format!("team-{idx}"),
+            name: format!("team-{idx}"),
+            idx: idx + 1,
+            distances: vec![],
+            num_rounds: idx + 1,
+        })
+        .collect::<Vec<_>>();
+
+    let rounds = (0..count_rounds)
+        .map(|idx| Round {
+            id: format!("round-{idx}"),
+            name: format!("round-{idx}"),
+            index: idx + 1,
+        })
+        .collect::<Vec<_>>();
+
+    let games = (0..count_games)
+        .map(|idx| Game {
+            id: format!("game-{idx}"),
+            home_idx: idx + 1,
+            away_idx: idx + 1,
+            pair_key: idx + 1,
+            distances: vec![],
+            round: if count_rounds == 0 {
+                None
+            } else {
+                Some(idx % count_rounds)
+            },
+        })
+        .collect::<Vec<_>>();
+
+    Schedule::new(teams, rounds, games)
 }

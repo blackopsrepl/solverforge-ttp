@@ -1,4 +1,36 @@
 {
   "title": "ttp",
-  "subtitle": "Constraint Optimizer"
+  "subtitle": "Constraint Optimizer",
+  "constraints": [
+    "pair_no_repeater",
+    "home_double_booking",
+    "away_double_booking",
+    "cross_side_double_booking",
+    "home_stand_limit",
+    "road_trip_limit",
+    "travel_home_to_away",
+    "travel_away_to_home",
+    "travel_away_to_away",
+    "first_round_departure",
+    "last_round_return"
+  ],
+  "entities": [
+    {
+      "name": "game",
+      "label": "Game",
+      "plural": "games"
+    }
+  ],
+  "facts": [
+    {
+      "name": "team",
+      "label": "Team",
+      "plural": "teams"
+    },
+    {
+      "name": "round",
+      "label": "Round",
+      "plural": "rounds"
+    }
+  ]
 }

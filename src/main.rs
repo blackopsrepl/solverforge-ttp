@@ -1,6 +1,6 @@
 /* ttp — unified optimizer with SolverForge
-   Run with: solverforge server
-   Then open the printed local URL (default port 7860) */
+Run with: solverforge server
+Then open the printed local URL (default port 7860) */
 
 use ttp::api;
 
