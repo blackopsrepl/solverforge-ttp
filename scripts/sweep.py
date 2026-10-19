@@ -5,6 +5,7 @@ per-constraint analysis to results/.
 """
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -106,16 +107,29 @@ def main():
                 best = snap.get("bestScore")
                 cur = snap.get("currentScore")
                 bk = BEST_KNOWN.get(inst)
-                travel = -int(best.split("/")[1]) if best else None
-                gap = round(100.0 * (travel - bk) / bk, 2) if travel is not None and bk else None
-                rows.append((inst, best, cur, travel, bk, gap))
+                hard = int(re.search(r"-?\d+", best.split("/")[0]).group()) if best else None
+                # A hard-violating score is not a sample of the travel space:
+                # report no feasible objective and no gap for it.
+                travel = (
+                    -int(re.search(r"-?\d+", best.split("/")[1]).group())
+                    if best is not None and hard == 0
+                    else None
+                )
+                feasible = hard == 0
+                gap = (round(100.0 * (travel - bk) / bk, 2) if travel is not None and bk else None)
+                rows.append((inst, best, cur, travel, bk, gap, feasible))
                 print(f"{inst:6s} {str(terminal):10s} best={best} current={cur} "
-                      f"travel={travel} best_known={bk} gap={gap}%")
+                      f"feasible={feasible} travel={travel} best_known={bk} gap={gap}%")
             with open(os.path.join(RESULTS, "sweep-summary.md"), "w") as f:
-                f.write("| instance | seconds | best score | travel | best known | gap |\n")
-                f.write("| --- | --- | --- | --- | --- | --- |\n")
-                for inst, best, _cur, travel, bk, gap in rows:
-                    f.write(f"| {inst} | {SECONDS} | {best} | {travel} | {bk} | {gap}% |\n")
+                f.write("| instance | seconds | best score | feasible | travel | best known | gap |\n")
+                f.write("| --- | --- | --- | --- | --- | --- | --- |\n")
+                for inst, best, _cur, travel, bk, gap, feasible in rows:
+                    travel_cell = travel if travel is not None else "—"
+                    gap_cell = f"{gap}%" if gap is not None else "—"
+                    f.write(
+                        f"| {inst} | {SECONDS} | {best} | {'yes' if feasible else 'NO'} | "
+                        f"{travel_cell} | {bk} | {gap_cell} |\n"
+                    )
             return 0
         finally:
             server.terminate()
