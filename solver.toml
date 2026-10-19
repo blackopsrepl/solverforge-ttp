@@ -1,7 +1,54 @@
+# Native SolverForge only: construct, reach feasibility, then minimize travel.
+# Every rule is scored natively by the constraint streams in src/constraints.
+random_seed = 1
+
+[termination]
+seconds_spent_limit = 120
+
+# Score-aware greedy placement beats blind first-fit on a hard-feasibility
+# assignment: each game goes to the round that damages the score least.
 [[phases]]
 type = "construction_heuristic"
-construction_heuristic_type = "first_fit"
+construction_heuristic_type = "cheapest_insertion"
+entity_class = "Game"
+variable_name = "round"
 
+# Reach feasibility: fast first-accept stepping over change + swap + small
+# ruin-recreate, stopping the moment the hard level reaches zero.
+[[phases]]
+type = "local_search"
+[phases.termination]
+best_score_limit = "0hard/-1000000000soft"
+[phases.acceptor]
+type = "diversified_late_acceptance"
+late_acceptance_size = 400
+# Best-of-step breadth over the whole union: first-accept wandering cannot
+# repair a near-perfect packing, where fixing one team's double booking
+# usually requires choosing the ONE move that does not create another.
+[phases.forager]
+type = "accepted_count"
+limit = 16
+[phases.move_selector]
+type = "union_move_selector"
+[[phases.move_selector.selectors]]
+type = "change_move_selector"
+entity_class = "Game"
+variable_name = "round"
+[[phases.move_selector.selectors]]
+type = "swap_move_selector"
+entity_class = "Game"
+variable_name = "round"
+[[phases.move_selector.selectors]]
+type = "ruin_recreate_move_selector"
+entity_class = "Game"
+variable_name = "round"
+min_ruin_count = 2
+max_ruin_count = 12
+recreate_heuristic_type = "cheapest_insertion"
+
+# Optimize travel distance while keeping every structural rule hard. Wider
+# ruin windows let whole road trips and home stands move together — the move
+# TTP's landscape actually rewards.
 [[phases]]
 type = "local_search"
 [phases.acceptor]
@@ -9,12 +56,24 @@ type = "late_acceptance"
 late_acceptance_size = 400
 [phases.forager]
 type = "accepted_count"
-limit = 4
+limit = 1
+[phases.move_selector]
+type = "union_move_selector"
+[[phases.move_selector.selectors]]
+type = "change_move_selector"
+entity_class = "Game"
+variable_name = "round"
+[[phases.move_selector.selectors]]
+type = "swap_move_selector"
+entity_class = "Game"
+variable_name = "round"
+[[phases.move_selector.selectors]]
+type = "ruin_recreate_move_selector"
+entity_class = "Game"
+variable_name = "round"
+min_ruin_count = 3
+max_ruin_count = 10
+recreate_heuristic_type = "cheapest_insertion"
 
-[termination]
-seconds_spent_limit = 30
-
-# Opt in to bounded candidate-pull diagnostics when needed. Trace detail is
-# retained separately from ordinary status, snapshot, and SSE telemetry.
-# [candidate_trace]
-# max_entries = 100000
+[app]
+name = "solverforge-ttp"
