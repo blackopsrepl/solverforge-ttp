@@ -56,6 +56,9 @@ def wait_health(base, deadline=180):
 
 
 def solve_job(base, plan):
+    # The plan carries its own wall-clock budget; without this the job runs
+    # the server default and SECONDS only labels the result.
+    plan["duration_seconds"] = SECONDS
     job = api(base, "/jobs", method="POST", body=plan)
     job_id = job["id"]
     t0 = time.time()
