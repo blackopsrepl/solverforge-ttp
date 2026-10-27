@@ -95,25 +95,36 @@ The workbench embeds the classic **NL (National League)** instance class — rea
 | NL14 | 14 | 26 | 183354 | 203407 | open |
 | NL16 | 16 | 30 | 249477 | 271476 | open |
 
-<!-- SWEEP_RESULT: measured on the shipped solver.toml policy
-     (diversified late acceptance + accepted_count 16; feasibility phase stops
-     at 0hard; union change/swap/ruin-recreate; ruin 2-12 feasibility,
-     3-10 optimization), 120 s per instance, random_seed = 1. -->
+<!-- SWEEP_RESULT: measured with `SECONDS=120 make sweep` on the shipped
+     solver.toml policy (move_thread_count = 8; diversified late acceptance +
+     accepted_count 16; feasibility phase stops at 0hard; union
+     change/swap/ruin-recreate; ruin 2-12 feasibility, 3-10 optimization),
+     120 s per instance, random_seed = 1, SolverForge 0.23.0. -->
 
 | instance | result | feasible | travel | gap |
 |---|---|---|---|---|
 | NL4 | `0hard/-8276soft` | yes | 8276 | **0.0% — matched the proven optimum** |
 | NL6 | `0hard/-26419soft` | yes | 26419 | 10.5% |
-| NL8 | `0hard/-48001soft` | yes | 48001 | 20.9% |
+| NL8 | `0hard/-47654soft` | yes | 47654 | 20.0% |
 | NL10 | `0hard/-80328soft` | yes | 80328 | 35.2% |
-| NL12 | `-5hard/-148782soft` | no | — | — |
-| NL14 | `-7hard/-260093soft` | no | — | — |
-| NL16 | `-9hard/-368170soft` | no | — | — |
+| NL12 | `-3hard/-155968soft` | no | — | — |
+| NL14 | `-7hard/-258690soft` | no | — | — |
+| NL16 | `-6hard/-374277soft` | no | — | — |
 
 Two honest readings:
 
 - **NL4 lands on the published optimum exactly.** Construction plus a 120 s search reproduce the Easton–Trick value the golden test asserts — the model and the objective are right.
-- **The 12–16 team instances plateau on the double-booking family** (`home_double_booking`, `cross_side_double_booking`): the residual is a near-perfect packing where fixing one team's double booking must not create another, and the phase exhausts its budget at the same state — identically at 120 s and 300 s, across ruin widths and forager breadths. That is a documented search-shape limit of the shipped policy, not a model defect; the per-job `duration_seconds` field is the budget knob and the sweep takes `SECONDS`.
+- **The 12–16 team instances plateau on the double-booking family** (`home_double_booking`, `cross_side_double_booking`): the residual is a near-perfect packing where fixing one team's double booking must not create another, and the phase exhausts its budget at the same state — identically with one and eight evaluator threads. That is a documented search-shape limit of the shipped policy, not a model defect; the per-job `duration_seconds` field is the budget knob and the sweep takes `SECONDS`.
+
+### Multi-threaded evaluation
+
+`solver.toml` sets `move_thread_count = { count = 8 }`: every local-search step evaluates its candidates on up to eight evaluators while one coordinator keeps the sequential acceptance order, so a run stays reproducible at fixed work. The same 120 s sweep with the line removed is the sequential control:
+
+- **Best scores are identical** on all seven instances.
+- **Feasibility phase** (best-of-16): 1–5% more evaluated moves on NL12–16 in the same budget.
+- **Optimization phase** (first-accept): fewer consumed moves per second — e.g. NL10 evaluates 47,264 moves against 117,716 sequentially, because the evaluation window speculates past the first accepted move and discards the rest.
+
+Remove the line for a sequential solve; the count is capped by the machine's Rayon pool.
 
 ## Quick start
 
@@ -121,7 +132,7 @@ Two honest readings:
 cargo build --release
 make serve                 # default PORT=7862; override with PORT=...
 make solve INSTANCE=NL4 SECONDS=60
-make sweep                 # all 7 embedded instances (SECONDS=120 default)
+make sweep                 # all 7 embedded instances (SECONDS=60 default; the table uses 120)
 make check                 # fmt + clippy + tests + solverforge check
 ```
 
