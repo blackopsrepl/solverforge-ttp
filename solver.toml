@@ -1,6 +1,10 @@
 # Native SolverForge only: construct, reach feasibility, then minimize travel.
 # Every rule is scored natively by the constraint streams in src/constraints.
 random_seed = 1
+# Evaluate each local-search step's candidates on up to eight cores. The
+# coordinator keeps the sequential acceptance order, so a run stays
+# reproducible at fixed work; the cap is the solve's Rayon pool.
+move_thread_count = { count = 8 }
 
 [termination]
 seconds_spent_limit = 120
