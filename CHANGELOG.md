@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.2.0](https://github.com/blackopsrepl/solverforge-ttp/compare/v0.1.0...v0.2.0) (2026-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* **runtime:** telemetry.phase is replaced by telemetry.phases, one entry per started phase.
+
+### Features
+
+* **runtime:** target SolverForge 0.23.0 ([6041795](https://github.com/blackopsrepl/solverforge-ttp/commit/6041795fca81e7714670700d3178b8c79ef53607))
+* **solver:** evaluate local-search steps on eight threads ([5204cd2](https://github.com/blackopsrepl/solverforge-ttp/commit/5204cd2ccd736cf62be6454024a6ca7cd41f6cc2))
+
+
+### Bug Fixes
+
+* **sweep:** send SECONDS as each job's solve budget ([9edadb2](https://github.com/blackopsrepl/solverforge-ttp/commit/9edadb24e4fb0c9fab6d621560740136f8401177))
+
+
 ## 0.1.0 (2026-10-19)
 
 
