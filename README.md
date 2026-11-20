@@ -99,16 +99,16 @@ The workbench embeds the classic **NL (National League)** instance class — rea
      solver.toml policy (move_thread_count = 8; diversified late acceptance +
      accepted_count 16; feasibility phase stops at 0hard; union
      change/swap/ruin-recreate; ruin 2-12 feasibility, 3-10 optimization),
-     120 s per instance, random_seed = 1, SolverForge 0.23.0. -->
+     120 s per instance, random_seed = 1, SolverForge 0.31.2. -->
 
 | instance | result | feasible | travel | gap |
 |---|---|---|---|---|
 | NL4 | `0hard/-8276soft` | yes | 8276 | **0.0% — matched the proven optimum** |
 | NL6 | `0hard/-26419soft` | yes | 26419 | 10.5% |
-| NL8 | `0hard/-47654soft` | yes | 47654 | 20.0% |
-| NL10 | `0hard/-80328soft` | yes | 80328 | 35.2% |
+| NL8 | `0hard/-46943soft` | yes | 46943 | 18.2% |
+| NL10 | `0hard/-80749soft` | yes | 80749 | 35.9% |
 | NL12 | `-3hard/-155968soft` | no | — | — |
-| NL14 | `-7hard/-258690soft` | no | — | — |
+| NL14 | `-7hard/-260093soft` | no | — | — |
 | NL16 | `-6hard/-374277soft` | no | — | — |
 
 Two honest readings:
