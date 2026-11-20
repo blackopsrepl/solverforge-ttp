@@ -186,15 +186,15 @@ Status, snapshot, and SSE payloads expose the complete compact SolverForge telem
 ## Versioning
 
 - CLI version used to scaffold this project: `3.6.0`
-- SolverForge runtime target for this scaffold: `solverforge 0.23.0`
-- SolverForge UI target for this scaffold: `solverforge-ui 0.9.0`
-- SolverForge maps target for this scaffold: `solverforge-maps 2.1.4`
-- Runtime dependency currently wired into `Cargo.toml`: `crates.io: solverforge 0.23.0`
-- Frontend UI dependency currently wired into `Cargo.toml`: `crates.io: solverforge-ui 0.9.0`
-- Maps dependency currently wired into `Cargo.toml`: `crates.io: solverforge-maps 2.1.4`
+- SolverForge runtime target for this scaffold: `solverforge 0.31.2`
+- SolverForge UI target for this scaffold: `solverforge-ui 0.9.1`
+- SolverForge maps target for this scaffold: `solverforge-maps 2.3.4`
+- Runtime dependency currently wired into `Cargo.toml`: `crates.io: solverforge 0.31.2`
+- Frontend UI dependency currently wired into `Cargo.toml`: `crates.io: solverforge-ui 0.9.1`
+- Maps dependency currently wired into `Cargo.toml`: `crates.io: solverforge-maps 2.3.4`
 - Scaffold shell: `web`
 
-This project was scaffolded by `solverforge-cli`, and it currently targets `SolverForge crate target 0.23.0` through the configured crate dependency targets. Releases are cut with csemver (tag prefix `v`, version surfaces: package manifest + lockfile).
+This project was scaffolded by `solverforge-cli`, and it currently targets `SolverForge crate target 0.31.2` through the configured crate dependency targets. Releases are cut with csemver (tag prefix `v`, version surfaces: package manifest + lockfile).
 
 ## References
 
