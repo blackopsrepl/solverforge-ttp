@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/blackopsrepl/solverforge-ttp/compare/v0.3.0...v0.3.1) (2026-11-20)
+
+
+### Documentation
+
+* measure parallel evaluation against sequential and auto on 0.31.2 ([54aebd7](https://github.com/blackopsrepl/solverforge-ttp/commit/54aebd7d1b2671a49843a28ee9e892d4647e12ea))
+
+
 ## [0.3.0](https://github.com/blackopsrepl/solverforge-ttp/compare/v0.2.0...v0.3.0) (2026-11-20)
 
 
