@@ -108,7 +108,7 @@ The workbench embeds the classic **NL (National League)** instance class — rea
 | NL8 | `0hard/-46943soft` | yes | 46943 | 18.2% |
 | NL10 | `0hard/-80749soft` | yes | 80749 | 35.9% |
 | NL12 | `-3hard/-155968soft` | no | — | — |
-| NL14 | `-7hard/-260093soft` | no | — | — |
+| NL14 | `-7hard/-258690soft` | no | — | — |
 | NL16 | `-6hard/-374277soft` | no | — | — |
 
 Two honest readings:
@@ -118,13 +118,23 @@ Two honest readings:
 
 ### Multi-threaded evaluation
 
-`solver.toml` sets `move_thread_count = { count = 8 }`: every local-search step evaluates its candidates on up to eight evaluators while one coordinator keeps the sequential acceptance order, so a run stays reproducible at fixed work. The same 120 s sweep with the line removed is the sequential control:
+`solver.toml` sets `move_thread_count = { count = 8 }`: every local-search step evaluates its candidates on up to eight evaluators while one coordinator keeps the sequential acceptance order, so a run stays reproducible at fixed work. The same 120 s sweep was run back to back with `move_thread_count = "none"` (sequential) and with the line removed (`"auto"`, the runtime default, up to four evaluators):
 
-- **Best scores are identical** on all seven instances.
-- **Feasibility phase** (best-of-16): 1–5% more evaluated moves on NL12–16 in the same budget.
-- **Optimization phase** (first-accept): fewer consumed moves per second — e.g. NL10 evaluates 47,264 moves against 117,716 sequentially, because the evaluation window speculates past the first accepted move and discards the rest.
+| instance | best, count 8 | best, auto | best, none | LS moves evaluated (count 8 / auto / none) |
+|---|---|---|---|---|
+| NL4 | 8276 | 8276 | 8276 | 617,617 / 703,621 / 933,214 |
+| NL6 | 26419 | 26419 | 26419 | 188,421 / 249,254 / 397,253 |
+| NL8 | 46943 | 46943 | 46943 | 105,068 / 127,868 / 196,806 |
+| NL10 | 80749 | 80749 | **79480** | 60,420 / 72,241 / 130,012 |
+| NL12 | -3hard | -3hard | -3hard | 214,509 / 230,920 / 187,109 |
+| NL14 | -7hard | -7hard | -7hard | 168,546 / 174,819 / 147,716 |
+| NL16 | -6hard | -6hard | -6hard | 117,300 / 139,858 / 115,401 |
 
-Remove the line for a sequential solve; the count is capped by the machine's Rayon pool.
+- **Feasibility phase** (best-of-16, NL12–16): parallel evaluation pays — `count = 8` evaluates 2–15% more moves than sequential, `auto` 18–23% more.
+- **Optimization phase** (first-accept): parallel evaluation costs — the evaluation window speculates past the first accepted move and discards the rest, so sequential evaluates 1.5–2.3x the moves, and on NL10 that buys a better schedule.
+- `auto` evaluates more moves than `count = 8` on every instance, with identical best scores.
+
+Timed runs vary between sweeps on a shared host (NL14 ended at `-258690soft` and `-260093soft` in two runs of the same build). Set `move_thread_count = "none"` for a sequential solve; an explicit count is capped by the machine's Rayon pool.
 
 ## Quick start
 
@@ -188,10 +198,8 @@ Status, snapshot, and SSE payloads expose the complete compact SolverForge telem
 - CLI version used to scaffold this project: `3.6.0`
 - SolverForge runtime target for this scaffold: `solverforge 0.31.2`
 - SolverForge UI target for this scaffold: `solverforge-ui 0.9.1`
-- SolverForge maps target for this scaffold: `solverforge-maps 2.3.4`
 - Runtime dependency currently wired into `Cargo.toml`: `crates.io: solverforge 0.31.2`
 - Frontend UI dependency currently wired into `Cargo.toml`: `crates.io: solverforge-ui 0.9.1`
-- Maps dependency currently wired into `Cargo.toml`: `crates.io: solverforge-maps 2.3.4`
 - Scaffold shell: `web`
 
 This project was scaffolded by `solverforge-cli`, and it currently targets `SolverForge crate target 0.31.2` through the configured crate dependency targets. Releases are cut with csemver (tag prefix `v`, version surfaces: package manifest + lockfile).
