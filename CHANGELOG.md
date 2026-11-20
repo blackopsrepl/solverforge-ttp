@@ -1,6 +1,28 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [0.3.0](https://github.com/blackopsrepl/solverforge-ttp/compare/v0.2.0...v0.3.0) (2026-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **runtime:** constraint analysis entries carry weightMultiplier instead of weight, and selector telemetry drops its six conflictRepair* fields.
+
+### Features
+
+* **runtime:** target SolverForge 0.31.2 ([5cde067](https://github.com/blackopsrepl/solverforge-ttp/commit/5cde0673cc0286f13a8cc5e6d8206cc05c3f6cee))
+
+
+### Documentation
+
+* publish the 120 s sweep on SolverForge 0.31.2 ([a577b9e](https://github.com/blackopsrepl/solverforge-ttp/commit/a577b9e5e8421ae229c8dcbf8fd35beaccc8bfbc))
+
+
+### Code Refactoring
+
+* **constraints:** keep the module root to declarations and re-exports ([1d1df76](https://github.com/blackopsrepl/solverforge-ttp/commit/1d1df767c4793a7e85093618c182f2e6d69940fd))
+
 
 ## [0.2.0](https://github.com/blackopsrepl/solverforge-ttp/compare/v0.1.0...v0.2.0) (2026-10-27)
 
