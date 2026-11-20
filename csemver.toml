@@ -12,6 +12,21 @@ packageFiles = [
   { filename = "Cargo.toml", type = "regex", pattern = '^version = "([0-9]+\.[0-9]+\.[0-9]+)"', versionGroup = 1 },
 ]
 
+# Top-level keys stay above the first [[...]] header: TOML scopes any key
+# written after a table header into that table.
+types = [
+  { type = "feat", section = "Features" },
+  { type = "fix", section = "Bug Fixes" },
+  { type = "perf", section = "Performance" },
+  { type = "docs", section = "Documentation" },
+  { type = "chore", effect = "hidden" },
+  { type = "style", effect = "hidden" },
+  { type = "refactor", section = "Code Refactoring" },
+  { type = "test", effect = "hidden" },
+  { type = "build", effect = "hidden" },
+  { type = "ci", effect = "hidden" },
+]
+
 [[bumpFiles]]
 filename = "Cargo.toml"
 type = "regex"
@@ -26,16 +41,3 @@ filename = "Cargo.lock"
 type = "regex"
 pattern = '''^name = "ttp"$[[:space:]]^version = "([0-9]+\.[0-9]+\.[0-9]+)"'''
 versionGroup = 1
-
-types = [
-  { type = "feat", section = "Features" },
-  { type = "fix", section = "Bug Fixes" },
-  { type = "perf", section = "Performance" },
-  { type = "docs", section = "Documentation" },
-  { type = "chore", effect = "hidden" },
-  { type = "style", effect = "hidden" },
-  { type = "refactor", effect = "hidden" },
-  { type = "test", effect = "hidden" },
-  { type = "build", effect = "hidden" },
-  { type = "ci", effect = "hidden" },
-]
